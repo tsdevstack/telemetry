@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "lib": ["ES2022"],
+    "module": "nodenext",
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "nodenext",
+    "types": ["node"]
+  },
+  "include": ["src"]
+}

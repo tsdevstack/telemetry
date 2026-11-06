@@ -1,0 +1,76 @@
+{
+  "name": "@tsdevstack/telemetry",
+  "version": "0.1.0",
+  "description": "Traces for tsdevstack services and Next.js frontends: one setup, sent to Cloud Trace, X-Ray, Azure Monitor or locally to Jaeger",
+  "type": "commonjs",
+  "author": "tsdevstack",
+  "private": false,
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsdevstack/telemetry.git"
+  },
+  "homepage": "https://github.com/tsdevstack/telemetry",
+  "bugs": {
+    "url": "https://github.com/tsdevstack/telemetry/issues"
+  },
+  "keywords": [
+    "tsdevstack",
+    "opentelemetry",
+    "tracing",
+    "cloud-trace",
+    "x-ray",
+    "azure-monitor",
+    "nextjs",
+    "nestjs"
+  ],
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "NOTICE"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "tsc --noEmit --watch",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "test": "rstest run",
+    "tsc": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/credential-provider-node": "^3.972.88",
+    "@azure/identity": "^4.14.0",
+    "@opentelemetry/api": "^1.10.0",
+    "@opentelemetry/context-async-hooks": "^3.0.0",
+    "@opentelemetry/core": "^3.0.0",
+    "@opentelemetry/otlp-transformer": "^0.300.0",
+    "@opentelemetry/resources": "^3.0.0",
+    "@opentelemetry/sdk-trace": "^3.0.0",
+    "@opentelemetry/semantic-conventions": "^1.43.0",
+    "@smithy/signature-v4": "^5.7.4",
+    "google-auth-library": "^11.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@rslib/core": "^1.0.4",
+    "@rstest/adapter-rslib": "^0.12.4",
+    "@rstest/core": "^0.12.4",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.7.0",
+    "globals": "^17.5.0",
+    "prettier": "^3.6.2",
+    "typescript": "^6.0.0",
+    "typescript-eslint": "^8.63.0"
+  }
+}
