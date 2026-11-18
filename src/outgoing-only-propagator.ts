@@ -4,10 +4,11 @@ import type {
   TextMapPropagator,
   TextMapSetter,
 } from '@opentelemetry/api';
-import { W3CTraceContextPropagator } from '@opentelemetry/core';
+import { TraceparentCopyPropagator } from './traceparent-copy-propagator';
 
 /**
- * W3C trace context for outgoing calls only.
+ * W3C trace context (with the framework's copy of traceparent) for outgoing
+ * calls only.
  *
  * For a process that takes requests straight from the internet (the
  * Next.js frontend): a traceparent sent by a browser or any other client is
@@ -16,10 +17,10 @@ import { W3CTraceContextPropagator } from '@opentelemetry/core';
  * trace (Kong keeps it for the frontend).
  */
 export class OutgoingOnlyPropagator implements TextMapPropagator {
-  private readonly w3c = new W3CTraceContextPropagator();
+  private readonly outgoing = new TraceparentCopyPropagator();
 
   inject(context: Context, carrier: unknown, setter: TextMapSetter): void {
-    this.w3c.inject(context, carrier, setter);
+    this.outgoing.inject(context, carrier, setter);
   }
 
   extract(
@@ -31,6 +32,6 @@ export class OutgoingOnlyPropagator implements TextMapPropagator {
   }
 
   fields(): string[] {
-    return this.w3c.fields();
+    return this.outgoing.fields();
   }
 }

@@ -1,3 +1,5 @@
+import { createContextKey } from '@opentelemetry/api';
+
 /** Where traces go when no cloud is set: Jaeger's OTLP port, locally */
 export const DEFAULT_LOCAL_OTLP_ENDPOINT = 'http://localhost:4318';
 
@@ -31,6 +33,25 @@ export const EXPORT_TIMEOUT_MS = 10_000;
 
 /** How much of an error response goes into the export error message */
 export const EXPORT_ERROR_BODY_LIMIT = 300;
+
+/**
+ * A copy of the W3C traceparent, sent next to it on every call and read
+ * first. A platform in front of a container can rewrite traceparent (Cloud
+ * Run points it at its own span, with its own sampling decision) but leaves
+ * this header alone, so each hop continues the trace its caller sent. Kong's
+ * tsdevstack-opentelemetry plugin sends and reads the same name (the CLI's
+ * KONG_TRACEPARENT_COPY_HEADER).
+ */
+export const TRACEPARENT_COPY_HEADER = 'x-tsdevstack-traceparent';
+
+/**
+ * Set in the extracted context when the parent came from
+ * TRACEPARENT_COPY_HEADER: a framework hop (Kong, the frontend, a service)
+ * made the decision, so the sampler follows it both ways
+ */
+export const PARENT_FROM_COPY_KEY = createContextKey(
+  'tsdevstack parent from the traceparent copy',
+);
 
 /** Share of new traces kept when TRACE_SAMPLE_RATE is not set */
 export const DEFAULT_TRACE_SAMPLE_RATE = 1;

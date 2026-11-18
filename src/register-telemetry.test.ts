@@ -56,7 +56,7 @@ describe('registerTelemetry', () => {
       await telemetry.shutdown();
     });
 
-    it('should carry the trace in a W3C traceparent, without baggage', async () => {
+    it('should carry the trace in a W3C traceparent and its copy, without baggage', async () => {
       const telemetry = registerTelemetry();
       const span = trace.getTracer('test').startSpan('GET /x');
       const headers: Record<string, string> = {};
@@ -66,9 +66,33 @@ describe('registerTelemetry', () => {
       );
       span.end();
 
-      expect(Object.keys(headers)).toEqual(['traceparent']);
+      expect(Object.keys(headers)).toEqual([
+        'traceparent',
+        'x-tsdevstack-traceparent',
+      ]);
       expect(headers.traceparent).toBe(
         `00-${span.spanContext().traceId}-${span.spanContext().spanId}-01`,
+      );
+      expect(headers['x-tsdevstack-traceparent']).toBe(headers.traceparent);
+      await telemetry.shutdown();
+    });
+
+    it("should follow the caller's decision from the copy, even one it dropped", async () => {
+      const telemetry = registerTelemetry();
+      const parent = propagation.extract(ROOT_CONTEXT, {
+        // What a platform in front made of it (Cloud Run): its own span
+        traceparent: '00-5759e988bd862e3fe1be46a994272793-a1b2c3d4e5f60718-01',
+        // What Kong sent
+        'x-tsdevstack-traceparent':
+          '00-5759e988bd862e3fe1be46a994272793-53995c3f42cd8ad8-00',
+      });
+
+      const span = trace.getTracer('test').startSpan('GET /x', {}, parent);
+      span.end();
+
+      expect(span.isRecording()).toBe(false);
+      expect(span.spanContext().traceId).toBe(
+        '5759e988bd862e3fe1be46a994272793',
       );
       await telemetry.shutdown();
     });
@@ -115,6 +139,7 @@ describe('registerTelemetry', () => {
       expect(headers.traceparent).toBe(
         `00-${span.spanContext().traceId}-${span.spanContext().spanId}-01`,
       );
+      expect(headers['x-tsdevstack-traceparent']).toBe(headers.traceparent);
       await telemetry.shutdown();
     });
 

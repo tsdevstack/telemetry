@@ -1,6 +1,5 @@
 import { context, propagation, trace } from '@opentelemetry/api';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
-import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import { BatchSpanProcessor, TracerProvider } from '@opentelemetry/sdk-trace';
 import { buildTelemetryResource } from './build-telemetry-resource';
 import { createTraceExporter } from './create-trace-exporter';
@@ -8,12 +7,14 @@ import { createTraceSampler } from './create-trace-sampler';
 import { OutgoingOnlyPropagator } from './outgoing-only-propagator';
 import { readTraceSampleRate } from './read-trace-sample-rate';
 import { resolveTelemetryProvider } from './resolve-telemetry-provider';
+import { TraceparentCopyPropagator } from './traceparent-copy-propagator';
 import type { RegisterTelemetryOptions, TelemetryHandle } from './types';
 
 /**
  * Sets up tracing for the process, once, before the app handles requests:
  * the tracer provider (resource, sampler, the cloud's exporter), the async
- * context and the W3C traceparent propagator, registered globally so
+ * context and the W3C traceparent propagator (with the framework's copy of
+ * traceparent, which platforms don't rewrite), registered globally so
  * NestJS, Next.js and our clients all see the same trace.
  *
  * Next.js: call it from instrumentation.ts (Node.js runtime only), with
@@ -54,7 +55,7 @@ export function registerTelemetry(
   propagation.setGlobalPropagator(
     options.continueIncomingTraces === false
       ? new OutgoingOnlyPropagator()
-      : new W3CTraceContextPropagator(),
+      : new TraceparentCopyPropagator(),
   );
 
   return {

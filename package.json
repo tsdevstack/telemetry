@@ -1,6 +1,6 @@
 {
   "name": "@tsdevstack/telemetry",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Traces for tsdevstack services and Next.js frontends: one setup, sent to Cloud Trace, X-Ray, Azure Monitor or locally to Jaeger",
   "type": "commonjs",
   "author": "tsdevstack",

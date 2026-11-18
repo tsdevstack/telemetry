@@ -29,13 +29,15 @@ describe('OutgoingOnlyPropagator', () => {
 
       expect(headers).toEqual({
         traceparent: '00-5759e988bd862e3fe1be46a994272793-7d0e9b68a33bca06-01',
+        'x-tsdevstack-traceparent':
+          '00-5759e988bd862e3fe1be46a994272793-7d0e9b68a33bca06-01',
       });
     });
 
     it("should not take the trace from a request's headers", () => {
       const context = propagator.extract(
         ROOT_CONTEXT,
-        { traceparent: TRACEPARENT },
+        { traceparent: TRACEPARENT, 'x-tsdevstack-traceparent': TRACEPARENT },
         defaultTextMapGetter,
       );
 
